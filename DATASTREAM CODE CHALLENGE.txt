@@ -1,0 +1,14 @@
+DATASTREAM CODE CHALLENGE
+
+They prefer to have the technical challenge completed prior to the next meeting for added context to the meeting. 
+
+The coding challenge is to write a program in JavaScript that takes a csv data file and a location argument and outputs the average water temperature for the provided location. Specifically the program:
+
+Must be written in javascript
+Should take two inputs
+CSV file downloaded from https://doi.org/10.25976/vahx-dq27
+a "MonitoringLocationID"
+Should output
+The average ResultValue for all entries with the "CharacteristicName" of “Temperature, water” and the “MonitoringLocationID” matching the input argument.
+ 
+Please provide your project to us by May 17 at 9am. Code can be submitted preferably as an online repository (GitHub, BitBucket, etc) or alternatively as a zip or tarball. Once complete, please email will@gordonfn.org and billingb@gmail.com.

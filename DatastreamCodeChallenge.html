@@ -1,0 +1,140 @@
+<html>
+
+<head>
+    <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="https://www.papaparse.com/resources/js/papaparse.js"></script>
+    <script>
+        $(document).ready(function () {
+            const originalData = [];
+            const fileInput = document.querySelector('.fileInput');
+            fileInput.addEventListener('change', () => {
+                Papa.parse(fileInput.files[0], {
+                    download: true,
+                    header: true,
+                    keepEmptyRows: false,
+                    skipEmptyLines: true,
+                    step: function (row) {
+                        originalData.push(row.data);
+                    },
+                    complete: function (results) {
+                        //   document.querySelector("origdata").innerHTML = JSON.stringify(originalData);
+                    }
+                });
+            });
+
+            $.fn.calculateAverage = function (characteristicName, monitoringLocationID, defaultUnit) {
+                var totalDatacount = 0, goodMeasurementCount = 0, badMeasurementCount = 0, unknownUnitCount = 0, measurementTotal = 0.0, unknownUnitDesc;
+                $.each(originalData, function (index, measurement) {
+                    totalDatacount++;
+                    if (characteristicName.toLowerCase() == $.trim(measurement.CharacteristicName).toLowerCase() && monitoringLocationID.toLowerCase() == $.trim(measurement.MonitoringLocationID).toLowerCase()) {
+                        if (defaultUnit.toLowerCase() == $.trim(measurement.ResultUnit).toLowerCase()) {
+                            measuredValue = $.trim(measurement.ResultValue);
+                            if ($.isNumeric(measuredValue)) {
+                                measurementTotal += parseFloat(measuredValue);
+                                goodMeasurementCount++;
+                            } else {
+                                badMeasurementCount++;
+                            }
+                        } else {
+                            unknownUnitCount++;
+                            unknownUnitDesc += " " + $.trim(measurement.ResultUnit) + " ";
+                        }
+                    }
+                });
+                calcDesc = "<b>Characteristic Name:</b>" + characteristicName + " <b>Monitoring Location ID:</b>" + monitoringLocationID + " <b>Average:</b>" + measurementTotal / goodMeasurementCount + " " + defaultUnit + " <b># Good Measurements:</b>" + goodMeasurementCount + " <b># Bad Measurements:</b>" + badMeasurementCount + " <b># Unknown Units:</b>" + unknownUnitCount
+                if (unknownUnitCount > 0) calcDesc += " (" + unknownUnitDesc + ")";
+                calcDesc += " <b>Raw Data Count:</b>" + totalDatacount + "<br />";
+                document.querySelector("calculationLog").innerHTML += calcDesc;
+            }
+
+            $(".calc-btn").click(function () {
+                monitoringLocationId = $('.txtMonitoringLocationID').val();
+                if (monitoringLocationId.length == 0) {
+                    alert("Please enter a Monitoring Location Id");
+                } else {
+                    if (originalData.length == 0) {
+                        alert("Please choose an input file in .csv format");
+                    } else {
+                        $.fn.calculateAverage('Temperature, water', monitoringLocationId, "deg C");
+                    }
+                }
+            });
+        });
+
+        function toggleErrorMessage() {
+            var x = document.getElementById("downloadErrorMessage");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+        }
+
+    </script>
+</head>
+
+<body>
+    <img alt="The Gordon Foundation Logo" data-src="the-gordon-foundation-full.svg" classXXX="tgf-logo lazyloaded"
+        style="height: 220px" src="the-gordon-foundation-full.svg">
+
+    <h1>Datastream Code Challenge</h1>
+    <h3>Characteristic Name: <u>Temperature, water</u></h3>
+    <h3>Default Unit: <u>deg C</u></h3>
+    <hr>
+    <input type="file" class="fileInput"><br /><br />
+    Monitoring Location ID<input type="text" id="txtMonitoringLocationID" name="txtMonitoringLocationID"
+        class="txtMonitoringLocationID" value="" /><br /><br />
+
+    <input type="button" class="calc-btn" value="Calculate Water Temperature Average"
+        text="Calculate Water Temperature Average"><br /><br />
+    <hr>
+    <calculationLog>
+    </calculationLog>
+    <br />
+    <hr>
+    <div>
+        <h3>Developer Notes</h3>
+        <ul>
+            <li>
+                I received an error upon attempting to download from DataStream. The error can be displayed from this
+                page. I was able to open
+                the details and download from there successfully.
+            </li>
+            <li>
+                Average floating point precision should be adjusted to be meaningful to the users.
+            </li>
+            <li>
+                Attention should be paid to the input file size to ensure that the size isn't too large for the current
+                strategy. Streaming could be an alternative. Currently the data seems small (.csv has 3301
+                measurements). Also preprocessing the averages might be a valuable strategy.
+            </li>
+            <li>
+                Average statistics could be expanded to include error bars or confidence ratings based upon number of
+                measurements, etc.
+            </li>
+            <li>
+                There is a second .csv file that gets downloaded from DataStream which contains the metadata of the
+                location. This could
+                be consumed and presented in the page if desired. It could be used to build dropdown lists of units,
+                monitoring locations, etc.
+            </li>
+            <li>Testing should be done using different input .csv data using single and double quotes, slashes, dashes,
+                etc. to ensure that the data is getting properly parsed.
+            </li>
+        </ul>
+    </div>
+    <hr>
+    <div>Error Message that I received upon trying to download .csv file:
+        <input type="button" value="Toggle Download Error Message" text="Toggle Download Error Message"
+            onclick="toggleErrorMessage()"><br />
+    </div>
+    <div id="downloadErrorMessage" style="display:none">
+        <h1>Download Error Message</h1>
+        <img alt="Err Message" src="DataStream Download Error.jpg">
+        </span>
+
+        <origdata>
+        </origdata>
+</body>
+
+</html>
