@@ -41,7 +41,7 @@
                         }
                     }
                 });
-                calcDesc = "<b>Characteristic Name:</b>" + characteristicName + " <b>Monitoring Location ID:</b>" + monitoringLocationID + " <b>Average:</b>" + measurementTotal / goodMeasurementCount + " " + defaultUnit + " <b># Good Measurements:</b>" + goodMeasurementCount + " <b># Bad Measurements:</b>" + badMeasurementCount + " <b># Unknown Units:</b>" + unknownUnitCount
+                calcDesc = "<b>Filename:</b>" + fileInput.value + " <b>Characteristic Name:</b>" + characteristicName + " <b>Monitoring Location ID:</b>" + monitoringLocationID + " <b>Average:</b>" + measurementTotal / goodMeasurementCount + " " + defaultUnit + " <b># Good Measurements:</b>" + goodMeasurementCount + " <b># Bad Measurements:</b>" + badMeasurementCount + " <b># Unknown Units:</b>" + unknownUnitCount
                 if (unknownUnitCount > 0) calcDesc += " (" + unknownUnitDesc + ")";
                 calcDesc += " <b>Raw Data Count:</b>" + totalDatacount + "<br />";
                 document.querySelector("calculationLog").innerHTML += calcDesc;
@@ -52,7 +52,7 @@
                 if (monitoringLocationId.length == 0) {
                     alert("Please enter a Monitoring Location Id");
                 } else {
-                    if (originalData.length == 0) {
+                    if (fileInput.value.length == 0) {
                         alert("Please choose an input file in .csv format");
                     } else {
                         $.fn.calculateAverage('Temperature, water', monitoringLocationId, "deg C");
@@ -120,6 +120,8 @@
             </li>
             <li>Testing should be done using different input .csv data using single and double quotes, slashes, dashes,
                 etc. to ensure that the data is getting properly parsed.
+            </li>
+            <li>Future work could be done in handling multiple units and conversion values between them.
             </li>
         </ul>
     </div>
